@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import { ExternalLink, Loader2, Plus } from 'lucide-react'
+import { Chess as ChessEngine } from 'chess.js'
 import Page from '../components/common/Page'
 import SectionHeader from '../components/common/SectionHeader'
 import Reveal from '../components/animations/Reveal'
 import { chessGames, chessStats, savedChessProfiles } from '../data/chess'
-import { extractChessComUsername, fenToBoard, getPieceSymbol } from '../utils/chess'
+import { extractChessComUsername, getPieceSymbol } from '../utils/chess'
 import { readStorage, writeStorage } from '../utils/storage'
 
 async function chessFetch(path) {
@@ -20,6 +21,7 @@ export default function Chess() {
   const [profileData, setProfileData] = useState(null)
   const [profileStats, setProfileStats] = useState(null)
   const [latestGame, setLatestGame] = useState(null)
+  const [moveIndex, setMoveIndex] = useState(0)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -61,8 +63,10 @@ export default function Chess() {
           })
           const latest = archive.games?.[archive.games.length - 1] ?? archive.games?.[0] ?? null
           setLatestGame(latest)
+          setMoveIndex(0)
         } else {
           setLatestGame(null)
+          setMoveIndex(0)
         }
       } catch (err) {
         if (!active) return
@@ -70,6 +74,7 @@ export default function Chess() {
         setProfileData(null)
         setProfileStats(null)
         setLatestGame(null)
+        setMoveIndex(0)
       } finally {
         if (active) setLoading(false)
       }
@@ -104,7 +109,47 @@ export default function Chess() {
     setError('')
   }
 
-  const board = useMemo(() => fenToBoard(latestGame?.fen), [latestGame?.fen])
+  const replay = useMemo(() => {
+    if (!latestGame?.pgn) return null
+
+      try {
+      const game = new ChessEngine()
+      game.loadPgn(latestGame.pgn, { sloppy: true })
+      const moves = game.history({ verbose: true })
+      return { moves }
+    } catch {
+      return null
+    }
+  }, [latestGame?.pgn])
+
+  const boardState = useMemo(() => {
+    if (!latestGame) return []
+
+    try {
+      const game = new ChessEngine()
+      if (latestGame.pgn) {
+        game.loadPgn(latestGame.pgn, { sloppy: true })
+      }
+      const moves = game.history({ verbose: true })
+
+      while (game.history().length) {
+        game.undo()
+      }
+
+      const limit = Math.max(0, Math.min(moveIndex, moves.length))
+      for (let i = 0; i < limit; i += 1) {
+        game.move(moves[i])
+      }
+
+      return game.board()
+    } catch {
+      return []
+    }
+  }, [latestGame, moveIndex, replay])
+
+  const currentMove = replay?.moves?.[moveIndex - 1] ?? null
+  const nextMove = replay?.moves?.[moveIndex] ?? null
+  const totalMoves = replay?.moves?.length ?? 0
 
   return (
     <Page>
@@ -213,6 +258,30 @@ export default function Chess() {
               <p className="text-sm leading-7 text-ink/70">
                 {latestGame.white?.username} vs {latestGame.black?.username}
               </p>
+              {replay?.moves?.length ? (
+                <div className="rounded border border-ink/10 bg-paper p-3 text-sm leading-6 text-ink/72">
+                  <p className="text-xs font-bold uppercase tracking-[0.2em] text-burgundy">Move Playback</p>
+                  <p className="mt-2">
+                    Move {Math.min(moveIndex, totalMoves)} of {totalMoves}
+                  </p>
+                  <p className="mt-1 font-semibold text-ink">{currentMove ? `${currentMove.color === 'w' ? 'White' : 'Black'}: ${currentMove.san}` : 'Start position'}</p>
+                  <p className="mt-1 text-ink/64">{nextMove ? `Next: ${nextMove.color === 'w' ? 'White' : 'Black'} to play ${nextMove.san}` : 'Game complete'}</p>
+                  <div className="mt-4 flex gap-2">
+                    <button type="button" onClick={() => setMoveIndex((value) => Math.max(0, value - 1))} className="border border-ink/20 px-3 py-2 text-[10px] font-bold uppercase tracking-[0.2em]">
+                      Previous
+                    </button>
+                    <button type="button" onClick={() => setMoveIndex((value) => Math.min(totalMoves, value + 1))} className="border border-ink/20 px-3 py-2 text-[10px] font-bold uppercase tracking-[0.2em]">
+                      Next
+                    </button>
+                    <button type="button" onClick={() => setMoveIndex(0)} className="border border-ink/20 px-3 py-2 text-[10px] font-bold uppercase tracking-[0.2em]">
+                      Start
+                    </button>
+                    <button type="button" onClick={() => setMoveIndex(totalMoves)} className="border border-ink/20 px-3 py-2 text-[10px] font-bold uppercase tracking-[0.2em]">
+                      End
+                    </button>
+                  </div>
+                </div>
+              ) : null}
               <a href={latestGame.url} target="_blank" rel="noreferrer" className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-coffee">
                 Open on Chess.com <ExternalLink size={14} />
               </a>
@@ -224,14 +293,17 @@ export default function Chess() {
 
         <div className="border-y border-ink py-8">
           <div className="grid grid-cols-8 gap-1 sm:grid-cols-8">
-            {board.length > 0 ? (
-              board.map((rank, rankIndex) =>
+            {boardState.length > 0 ? (
+              boardState.map((rank, rankIndex) =>
                 rank.map((piece, fileIndex) => {
                   const isLight = (rankIndex + fileIndex) % 2 === 0
+                  const squareName = `${String.fromCharCode(97 + fileIndex)}${8 - rankIndex}`
+                  const isFrom = currentMove?.from === squareName
+                  const isTo = currentMove?.to === squareName
                   return (
                     <div
                       key={`${rankIndex}-${fileIndex}`}
-                      className={`grid aspect-square place-items-center text-xl md:text-2xl ${isLight ? 'bg-newsprint' : 'bg-coffee/70'}`}
+                      className={`grid aspect-square place-items-center text-xl md:text-2xl ${isLight ? 'bg-newsprint' : 'bg-coffee/70'} ${isFrom ? 'ring-4 ring-burgundy ring-inset' : ''} ${isTo ? 'ring-4 ring-gold ring-inset' : ''}`}
                     >
                       <span className={piece?.color === 'w' ? 'text-ink' : 'text-newsprint'}>{piece ? getPieceSymbol(piece) : ''}</span>
                     </div>
@@ -264,6 +336,27 @@ export default function Chess() {
           </>
         )}
       </section>
+
+      {replay?.moves?.length ? (
+        <section className="mt-14 border border-ink/15 bg-newsprint/78 p-6 shadow-paper">
+          <p className="text-xs font-bold uppercase tracking-[0.24em] text-coffee">Move List</p>
+          <div className="mt-5 grid gap-2 md:grid-cols-2 lg:grid-cols-3">
+            {replay.moves.map((move, index) => (
+              <button
+                key={`${move.san}-${index}`}
+                type="button"
+                onClick={() => setMoveIndex(index + 1)}
+                className={`flex items-center justify-between border px-4 py-3 text-left text-sm transition ${
+                  moveIndex === index + 1 ? 'border-ink bg-ink text-newsprint' : 'border-ink/15 bg-paper text-ink/72 hover:bg-ink/5'
+                }`}
+              >
+                <span>{Math.floor(index / 2) + 1}{move.color === 'w' ? '. ' : '... '}{move.san}</span>
+                <span className="text-[10px] uppercase tracking-[0.2em] opacity-70">{move.color === 'w' ? 'White' : 'Black'}</span>
+              </button>
+            ))}
+          </div>
+        </section>
+      ) : null}
     </Page>
   )
 }
