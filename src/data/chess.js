@@ -28,3 +28,12 @@ export const chessGames = [
     note: 'King activity, one extra pawn, and no unnecessary hurry.',
   },
 ]
+
+export const savedChessProfiles = [
+  {
+    id: 'prakash-demo',
+    label: 'Prakash',
+    username: 'hikaru',
+    profileUrl: 'https://www.chess.com/member/hikaru',
+  },
+]
