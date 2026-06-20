@@ -9,7 +9,7 @@ import { memories } from '../data/memories'
 import { newsEntries } from '../data/news'
 import { aiTools } from '../data/aiTools'
 import { chessGames } from '../data/chess'
-import { birthdays } from '../data/birthdays'
+import { getUpcomingEvents } from '../data/birthdays'
 import { careerMilestones, leadershipQuotes } from '../data/career'
 
 const sectionLinks = [
@@ -27,7 +27,7 @@ export default function Home() {
   const secondaryNews = newsEntries.find((item) => item.category === 'Business') ?? newsEntries[1] ?? newsEntries[0]
   const memoryFeature = memories.find((item) => item.cluster === 'Travel Notes') ?? memories[1] ?? memories[0]
   const memorySpotlight = memories.find((item) => item.cluster === 'Celebrations' && item.id !== hero.id) ?? memories[2] ?? memories[0]
-  const cinemaBirth = birthdays.find((item) => item.type === 'Birthday') ?? birthdays[0]
+  const upcomingOccasion = getUpcomingEvents(new Date(), 1)[0]
   const featuredQuote = leadershipQuotes[2] ?? leadershipQuotes[0]
   const featuredMilestone = careerMilestones[2] ?? careerMilestones[0]
   const aiPick = aiTools.find((item) => item.category === 'Answer Engine') ?? aiTools[0]
@@ -101,8 +101,8 @@ export default function Home() {
         </div>
         <div className="border border-ink/15 bg-newsprint/78 p-6 shadow-paper">
           <p className="text-xs font-bold uppercase tracking-[0.24em] text-burgundy">Upcoming</p>
-          <h3 className="mt-4 font-display text-4xl font-black">{cinemaBirth?.date ?? 'Coming up'}</h3>
-          <p className="mt-4 text-sm leading-6 text-ink/68">{cinemaBirth?.mood ?? 'A family date worth keeping on the front page.'}</p>
+          <h3 className="mt-4 font-display text-4xl font-black">{upcomingOccasion?.date ?? 'Coming up'}</h3>
+          <p className="mt-4 text-sm leading-6 text-ink/68">{upcomingOccasion?.raw ?? 'A family date worth keeping on the front page.'}</p>
         </div>
       </section>
 
