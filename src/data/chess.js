@@ -1,3 +1,5 @@
+export const defaultChessUsername = 'venkatprakash1'
+
 export const chessStats = [
   { label: 'Favorite Opening', value: 'Queen\'s Gambit' },
   { label: 'Style', value: 'Patient pressure' },
@@ -31,9 +33,9 @@ export const chessGames = [
 
 export const savedChessProfiles = [
   {
-    id: 'prakash-demo',
+    id: 'prakash-main',
     label: 'Prakash',
-    username: 'hikaru',
-    profileUrl: 'https://www.chess.com/member/hikaru',
+    username: defaultChessUsername,
+    profileUrl: `https://www.chess.com/member/${defaultChessUsername}`,
   },
 ]

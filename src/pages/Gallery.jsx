@@ -38,7 +38,6 @@ export default function Gallery() {
             </p>
             <div className="mt-7 flex flex-wrap gap-3 text-[10px] font-bold uppercase tracking-[0.24em]">
               <span className="border border-newsprint/30 px-3 py-2">{featured.cluster}</span>
-              <span className="border border-newsprint/30 px-3 py-2">{featured.date}</span>
               <span className="border border-newsprint/30 px-3 py-2">{featured.location}</span>
             </div>
           </div>
@@ -89,9 +88,7 @@ export default function Gallery() {
                 className={`h-64 w-full object-cover grayscale-[10%] transition duration-500 group-hover:scale-105 ${index % 4 === 0 ? 'h-80' : ''}`}
               />
               <div className="p-5">
-                <p className="text-xs font-bold uppercase tracking-[0.22em] text-coffee">
-                  {photo.cluster} / {photo.date}
-                </p>
+                <p className="text-xs font-bold uppercase tracking-[0.22em] text-coffee">{photo.cluster}</p>
                 <h3 className="mt-3 font-display text-3xl font-black leading-tight">{photo.title}</h3>
                 <p className="mt-3 text-sm leading-6 text-ink/68">{photo.caption}</p>
               </div>
@@ -104,9 +101,7 @@ export default function Gallery() {
         {selected && (
           <article className="p-6 pt-0">
             <img src={selected.image} alt="" className="h-80 w-full object-cover" />
-            <p className="mt-6 text-xs font-bold uppercase tracking-[0.24em] text-coffee">
-              {selected.cluster} / {selected.date}
-            </p>
+            <p className="mt-6 text-xs font-bold uppercase tracking-[0.24em] text-coffee">{selected.cluster} / {selected.location}</p>
             <h2 className="mt-3 font-display text-5xl font-black leading-none">{selected.title}</h2>
             <p className="mt-5 text-lg leading-8 text-ink/72">{selected.story}</p>
             <p className="mt-4 text-sm uppercase tracking-[0.2em] text-ink/50">{selected.location}</p>

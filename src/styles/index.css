@@ -69,3 +69,13 @@ body::before {
     radial-gradient(circle, transparent 42%, rgba(124, 81, 48, 0.24) 43%, rgba(124, 81, 48, 0.18) 47%, transparent 49%),
     radial-gradient(circle at 65% 40%, rgba(124, 81, 48, 0.14), transparent 8%);
 }
+
+.coffee-splatter {
+  background:
+    radial-gradient(circle at 16% 30%, rgba(124, 81, 48, 0.28) 0 6%, transparent 7%),
+    radial-gradient(circle at 30% 18%, rgba(124, 81, 48, 0.2) 0 4%, transparent 5%),
+    radial-gradient(circle at 42% 46%, rgba(124, 81, 48, 0.18) 0 5%, transparent 6%),
+    radial-gradient(circle at 60% 22%, rgba(124, 81, 48, 0.22) 0 4%, transparent 5%),
+    radial-gradient(circle at 74% 54%, rgba(124, 81, 48, 0.16) 0 4%, transparent 5%),
+    radial-gradient(circle at 52% 76%, rgba(124, 81, 48, 0.14) 0 6%, transparent 7%);
+}

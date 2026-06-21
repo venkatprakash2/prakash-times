@@ -11,7 +11,7 @@ export default function PolaroidCard({ memory, rotate = 0, onClick }) {
     >
       <img src={memory.image} alt="" className="h-56 w-full object-cover grayscale-[10%]" />
       <div className="mt-4">
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-coffee">{memory.date} / {memory.cluster}</p>
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-coffee">{memory.cluster}</p>
         <h3 className="mt-2 font-display text-2xl font-black">{memory.title}</h3>
       </div>
     </motion.button>

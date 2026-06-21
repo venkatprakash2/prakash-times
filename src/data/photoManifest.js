@@ -44,7 +44,6 @@ export const photoManifest = sortedImageEntries.map(([path, image], index) => {
     filename,
     image,
     title: titleFromIndex(index),
-    date: 'Undated',
     location: cluster === 'Travel Notes' ? 'Roadside' : cluster === 'Celebrations' ? 'Family room' : cluster === 'Work Notes' ? 'Desk corner' : 'Home',
     cluster,
     story,

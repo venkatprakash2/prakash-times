@@ -4,23 +4,26 @@ import { Chess as ChessEngine } from 'chess.js'
 import Page from '../components/common/Page'
 import SectionHeader from '../components/common/SectionHeader'
 import Reveal from '../components/animations/Reveal'
-import { chessGames, chessStats, savedChessProfiles } from '../data/chess'
+import { chessGames, chessStats, defaultChessUsername, savedChessProfiles } from '../data/chess'
 import { extractChessComUsername, getPieceSymbol } from '../utils/chess'
+import { loadChessProfileSnapshot } from '../utils/chessSummary'
 import { readStorage, writeStorage } from '../utils/storage'
-
-async function chessFetch(path) {
-  const response = await fetch(`https://api.chess.com/pub/${path}`)
-  if (!response.ok) throw new Error(`Chess.com request failed: ${response.status}`)
-  return response.json()
-}
 
 export default function Chess() {
   const [profileInput, setProfileInput] = useState('')
-  const [savedProfiles, setSavedProfiles] = useState(() => readStorage('prakash-times-chess-profiles', savedChessProfiles))
+  const [savedProfiles, setSavedProfiles] = useState(() => {
+    const stored = readStorage('prakash-times-chess-profiles', savedChessProfiles)
+    if (!Array.isArray(stored)) return savedChessProfiles
+
+    const canonical = stored.find((item) => item?.username?.toLowerCase() === defaultChessUsername)
+    return canonical ? [canonical] : savedChessProfiles
+  })
   const [selectedProfile, setSelectedProfile] = useState(savedProfiles[0] ?? null)
   const [profileData, setProfileData] = useState(null)
   const [profileStats, setProfileStats] = useState(null)
   const [latestGame, setLatestGame] = useState(null)
+  const [streakSummary, setStreakSummary] = useState(null)
+  const [gamesScanned, setGamesScanned] = useState(0)
   const [moveIndex, setMoveIndex] = useState(0)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -38,6 +41,9 @@ export default function Chess() {
         setProfileData(null)
         setProfileStats(null)
         setLatestGame(null)
+        setStreakSummary(null)
+        setGamesScanned(0)
+        setMoveIndex(0)
         return
       }
 
@@ -45,35 +51,23 @@ export default function Chess() {
       setError('')
 
       try {
-        const [profile, stats, archives] = await Promise.all([
-          chessFetch(`player/${username}`),
-          chessFetch(`player/${username}/stats`),
-          chessFetch(`player/${username}/games/archives`),
-        ])
-
+        const snapshot = await loadChessProfileSnapshot(username)
         if (!active) return
-        setProfileData(profile)
-        setProfileStats(stats)
 
-        const latestArchiveUrl = archives.archives?.[archives.archives.length - 1]
-        if (latestArchiveUrl) {
-          const archive = await fetch(latestArchiveUrl).then((response) => {
-            if (!response.ok) throw new Error(`Archive request failed: ${response.status}`)
-            return response.json()
-          })
-          const latest = archive.games?.[archive.games.length - 1] ?? archive.games?.[0] ?? null
-          setLatestGame(latest)
-          setMoveIndex(0)
-        } else {
-          setLatestGame(null)
-          setMoveIndex(0)
-        }
-      } catch (err) {
+        setProfileData(snapshot.profile)
+        setProfileStats(snapshot.stats)
+        setLatestGame(snapshot.latestGame)
+        setStreakSummary(snapshot.streak)
+        setGamesScanned(snapshot.games.length)
+        setMoveIndex(0)
+      } catch {
         if (!active) return
         setError('Could not load that Chess.com profile. Check the username and try again.')
         setProfileData(null)
         setProfileStats(null)
         setLatestGame(null)
+        setStreakSummary(null)
+        setGamesScanned(0)
         setMoveIndex(0)
       } finally {
         if (active) setLoading(false)
@@ -84,7 +78,7 @@ export default function Chess() {
     return () => {
       active = false
     }
-  }, [selectedProfile])
+  }, [selectedProfile?.username])
 
   const attachProfile = () => {
     const username = extractChessComUsername(profileInput)
@@ -95,15 +89,12 @@ export default function Chess() {
 
     const nextProfile = {
       id: `profile-${username.toLowerCase()}`,
-      label: username,
+      label: username === defaultChessUsername ? 'Prakash' : username,
       username,
       profileUrl: `https://www.chess.com/member/${username}`,
     }
 
-    setSavedProfiles((current) => {
-      const filtered = current.filter((item) => item.username.toLowerCase() !== username.toLowerCase())
-      return [nextProfile, ...filtered]
-    })
+    setSavedProfiles([nextProfile])
     setSelectedProfile(nextProfile)
     setProfileInput('')
     setError('')
@@ -112,7 +103,7 @@ export default function Chess() {
   const replay = useMemo(() => {
     if (!latestGame?.pgn) return null
 
-      try {
+    try {
       const game = new ChessEngine()
       game.loadPgn(latestGame.pgn, { sloppy: true })
       const moves = game.history({ verbose: true })
@@ -123,33 +114,29 @@ export default function Chess() {
   }, [latestGame?.pgn])
 
   const boardState = useMemo(() => {
-    if (!latestGame) return []
+    if (!replay?.moves?.length) return []
 
     try {
       const game = new ChessEngine()
-      if (latestGame.pgn) {
-        game.loadPgn(latestGame.pgn, { sloppy: true })
-      }
-      const moves = game.history({ verbose: true })
-
-      while (game.history().length) {
-        game.undo()
-      }
-
-      const limit = Math.max(0, Math.min(moveIndex, moves.length))
+      const limit = Math.max(0, Math.min(moveIndex, replay.moves.length))
       for (let i = 0; i < limit; i += 1) {
-        game.move(moves[i])
+        game.move(replay.moves[i])
       }
 
       return game.board()
     } catch {
       return []
     }
-  }, [latestGame, moveIndex, replay])
+  }, [moveIndex, replay])
 
   const currentMove = replay?.moves?.[moveIndex - 1] ?? null
   const nextMove = replay?.moves?.[moveIndex] ?? null
   const totalMoves = replay?.moves?.length ?? 0
+  const streakLabel = loading ? 'Loading…' : streakSummary?.days ? `${streakSummary.days}-day streak` : 'No active streak'
+  const profileHighlights = [
+    ...chessStats,
+    { label: 'Playing Streak', value: streakLabel },
+  ]
 
   return (
     <Page>
@@ -212,6 +199,8 @@ export default function Chess() {
                 <Stat label="Followers" value={String(profileData.followers ?? '—')} />
                 <Stat label="FIDE" value={String(profileData.fide ?? '—')} />
                 <Stat label="Status" value={profileData.status || '—'} />
+                <Stat label="Streak" value={streakLabel} />
+                <Stat label="Games" value={gamesScanned ? String(gamesScanned) : '—'} />
               </div>
             </div>
           )}
@@ -226,7 +215,7 @@ export default function Chess() {
             Prefers steady development, practical endgames, and positions where a small advantage can become a headline.
           </p>
           <div className="mt-8 grid grid-cols-2 gap-3">
-            {chessStats.map((stat) => (
+            {profileHighlights.map((stat) => (
               <div key={stat.label} className="border border-newsprint/18 p-4">
                 <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-crema">{stat.label}</p>
                 <p className="mt-2 font-display text-2xl font-black">{stat.value}</p>
@@ -257,6 +246,9 @@ export default function Chess() {
               </p>
               <p className="text-sm leading-7 text-ink/70">
                 {latestGame.white?.username} vs {latestGame.black?.username}
+              </p>
+              <p className="text-sm leading-7 text-ink/70">
+                Active streak: <span className="font-semibold text-ink">{streakLabel}</span>
               </p>
               {replay?.moves?.length ? (
                 <div className="rounded border border-ink/10 bg-paper p-3 text-sm leading-6 text-ink/72">
