@@ -10,7 +10,7 @@ export default function AiTechnology() {
       <SectionHeader
         kicker="AI & Technology"
         title="The technology desk, written for usefulness rather than hype."
-        copy="AI appears here as an editor's shelf of practical tools, wrapped in a vintage newspaper structure with a modern signal underneath."
+        copy="Practical tools, useful signals, and a calm editorial treatment for the tech desk."
       />
       <section className="grid gap-6 lg:grid-cols-[1.2fr_.8fr]">
         <Reveal className="relative min-h-[520px] overflow-hidden border border-ink bg-ink p-8 text-newsprint shadow-lift">

@@ -21,7 +21,7 @@ function HighlightCard({ to, label, title, copy, icon: Icon, image, meta }) {
         </div>
         <Icon size={20} className="shrink-0 text-crema" />
       </div>
-      {image && <img src={image} alt="" className="mt-4 h-28 w-full object-cover grayscale-[12%] transition duration-500 group-hover:scale-[1.02]" />}
+      {image && <img src={image} alt="" className="mt-4 h-44 w-full rounded-sm bg-paper/10 object-contain p-2 grayscale-[12%] transition duration-500 group-hover:scale-[1.02]" />}
       <p className="mt-3 text-sm leading-6 text-newsprint/74">{copy}</p>
       {meta && <p className="mt-3 text-[10px] font-bold uppercase tracking-[0.22em] text-crema/85">{meta}</p>}
     </Link>
@@ -88,17 +88,11 @@ export default function Home() {
           <img src={featuredMemory.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-68 grayscale-[16%]" />
           <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/44 to-transparent" />
           <div className="relative flex min-h-[430px] flex-col justify-between p-4 md:p-6">
-            <div className="max-w-3xl">
-              <p className="text-xs font-bold uppercase tracking-[0.28em] text-crema">Folded front page</p>
-              <h2 className="mt-2 max-w-3xl font-display text-3xl font-black leading-none md:text-4xl lg:text-5xl">
-                One memory, one role, one movie, one chess streak.
-              </h2>
-              <p className="mt-3 max-w-2xl text-sm leading-6 text-newsprint/76 md:text-[15px] md:leading-7">
-                A concise morning edition with the strongest memory, the current role, the top film, and the chess streak.
-              </p>
+            <div className="mx-auto w-full max-w-3xl text-center">
+              <h2 className="font-display text-3xl font-black leading-none md:text-4xl lg:text-5xl">Headlines</h2>
             </div>
 
-            <div className="grid gap-3 sm:grid-cols-2">
+            <div className="mx-auto grid w-full max-w-5xl gap-3 sm:grid-cols-2 xl:max-w-6xl">
               <HighlightCard
                 to="/memories"
                 label="Memory"

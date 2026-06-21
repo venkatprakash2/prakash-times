@@ -92,7 +92,7 @@ export default function Birthdays() {
       <SectionHeader
         kicker="Family Calendar"
         title="A living calendar for birthdays, anniversaries, and the family dates that deserve a headline."
-        copy="This page is now driven by the uploaded calendar CSV and shown in a proper month view, with morning reminders that slide in and disappear on their own."
+        copy="A month-view family calendar with morning reminders that slide in and dismiss automatically."
       />
 
       <section className="grid gap-6 lg:grid-cols-[1.15fr_.85fr]">

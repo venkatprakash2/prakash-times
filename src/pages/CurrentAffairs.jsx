@@ -57,7 +57,7 @@ export default function CurrentAffairs() {
       <SectionHeader
         kicker="Current Affairs"
         title="A personalized news desk with concise AI-style summaries."
-        copy="The section favors clarity and context: live stories from NewsAPI when available, filtered to the interests that fit Prakash best."
+        copy="Live stories from NewsAPI, filtered to Prakash-relevant topics."
       />
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3 text-xs font-bold uppercase tracking-[0.2em] text-ink/55">
         <span>{loading ? 'Refreshing live stories...' : sourceLabel}</span>
@@ -92,7 +92,7 @@ export default function CurrentAffairs() {
               </p>
             )}
             <div className="mt-6 border border-ink/15 bg-paper p-5">
-              <p className="text-xs font-bold uppercase tracking-[0.22em] text-coffee">Why it fits</p>
+              <p className="text-xs font-bold uppercase tracking-[0.22em] text-coffee">Context</p>
               <p className="mt-3 text-sm leading-6 text-ink/68">
                 This story survived the Prakash-interest filter for technology, leadership, business, India, or chess.
               </p>

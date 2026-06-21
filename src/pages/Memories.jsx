@@ -39,7 +39,7 @@ export default function Memories() {
       <SectionHeader
         kicker="Interactive Scrapbook"
         title="Family memories arranged like a desk full of photographs."
-        copy="The memories page now carries both readings of the archive: scrapbook storytelling and a clean gallery mode for browsing the same local photos."
+        copy="Family memories arranged as scrapbook cards and a gallery grid."
       />
 
       <div className="mb-6 flex flex-wrap gap-2">
@@ -75,9 +75,7 @@ export default function Memories() {
           <Reveal className="border border-ink/15 bg-newsprint/78 p-6 shadow-paper">
             <p className="text-xs font-bold uppercase tracking-[0.24em] text-burgundy">Archive Count</p>
             <h3 className="mt-4 font-display text-5xl font-black">{photoManifest.length}</h3>
-            <p className="mt-3 text-sm leading-6 text-ink/68">
-              The same local photo database now powers both storytelling modes without duplicating the page.
-            </p>
+            <p className="mt-3 text-sm leading-6 text-ink/68">All photos are drawn from the local archive.</p>
           </Reveal>
           <Reveal className="border border-ink/15 bg-newsprint/78 p-6 shadow-paper">
             <p className="text-xs font-bold uppercase tracking-[0.24em] text-coffee">Mode</p>
