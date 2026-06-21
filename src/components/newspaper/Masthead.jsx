@@ -6,7 +6,7 @@ export default function Masthead({ edition = 'Special Birthday Edition' }) {
         <span className="hidden h-px w-14 bg-ink/35 sm:block" />
         <span>{edition}</span>
       </div>
-      <h1 className="mt-2 font-display text-4xl font-black leading-none tracking-tight md:text-6xl lg:text-7xl">
+      <h1 className="mt-2 font-display text-4xl font-black leading-none tracking-tight md:text-5xl lg:text-6xl">
         The Prakash Times
       </h1>
       <div className="mt-3 flex flex-wrap items-center justify-center gap-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-ink/64 md:text-xs">

@@ -16,18 +16,46 @@ export default function Page({
       className={`relative mx-auto w-full ${widthClassName} ${paddingClassName} ${className}`}
     >
       <div aria-hidden="true" className="pointer-events-none absolute right-4 top-6 hidden opacity-35 lg:block">
-        <div className="relative h-28 w-32">
-          <div className="coffee-splatter absolute left-0 top-4 h-20 w-20 rounded-[42%] blur-[0.2px]" />
-          <div className="absolute bottom-3 left-6 h-10 w-14 rounded-b-[15px] rounded-t-[10px] border border-coffee/55 bg-paper/78 shadow-[inset_0_-8px_14px_rgba(124,81,48,0.14)]" />
-          <div className="absolute bottom-9 left-8 h-2 w-10 rounded-full bg-[#4c2e1c]/80" />
-          <div className="absolute bottom-6 left-16 h-5 w-5 rounded-full border-[3px] border-coffee/45 bg-transparent" />
-          <div className="absolute bottom-1 left-3 h-3 w-20 rounded-full bg-coffee/18 blur-[1px]" />
-          <div className="absolute left-10 top-0 flex gap-1 opacity-80">
-            <span className="h-9 w-[2px] rounded-full bg-coffee/28" />
-            <span className="mt-1 h-7 w-[2px] rounded-full bg-coffee/20" />
-            <span className="mt-0.5 h-8 w-[2px] rounded-full bg-coffee/24" />
-          </div>
-        </div>
+        <svg viewBox="0 0 400 400" className="h-32 w-32 overflow-visible" role="img" aria-hidden="true">
+          <defs>
+            <linearGradient id="brassGradientOnly" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#8a6f27" />
+              <stop offset="25%" stopColor="#e8c86b" />
+              <stop offset="50%" stopColor="#fff4cc" />
+              <stop offset="75%" stopColor="#ccaa43" />
+              <stop offset="100%" stopColor="#6e551c" />
+            </linearGradient>
+            <radialGradient id="foamGradientOnly" cx="50%" cy="40%" r="50%">
+              <stop offset="0%" stopColor="#fff5e6" />
+              <stop offset="60%" stopColor="#d1b48c" />
+              <stop offset="100%" stopColor="#8c6239" />
+            </radialGradient>
+          </defs>
+
+          <ellipse cx="200" cy="335" rx="80" ry="18" fill="rgba(0, 0, 0, 0.25)" />
+          <path d="M 100,160 L 135,320 Q 200,340 265,320 L 300,160 Z" fill="url(#brassGradientOnly)" stroke="#5c4a1a" strokeWidth="1.5" />
+          <path d="M 90,160 C 90,130 310,130 310,160 C 310,175 90,175 90,160 Z" fill="url(#brassGradientOnly)" stroke="#8a6f27" strokeWidth="1" />
+
+          <ellipse cx="200" cy="160" rx="96" ry="32" fill="url(#foamGradientOnly)" />
+
+          <g fill="#fff" opacity="0.6">
+            <circle cx="150" cy="155" r="4" />
+            <circle cx="158" cy="162" r="2" />
+            <circle cx="230" cy="150" r="5" />
+            <circle cx="242" cy="156" r="3" />
+            <circle cx="190" cy="170" r="4" />
+            <circle cx="210" cy="165" r="2.5" />
+            <circle cx="175" cy="148" r="3.5" />
+            <circle cx="222" cy="172" r="3" />
+          </g>
+          <g fill="#614124" opacity="0.4">
+            <circle cx="146" cy="158" r="3" />
+            <circle cx="236" cy="146" r="4" />
+            <circle cx="185" cy="164" r="5" />
+            <circle cx="202" cy="152" r="3" />
+            <circle cx="250" cy="162" r="2" />
+          </g>
+        </svg>
       </div>
       <div className="relative">{children}</div>
     </motion.div>
