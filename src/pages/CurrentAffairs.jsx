@@ -1,24 +1,68 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import Page from '../components/common/Page'
 import SectionHeader from '../components/common/SectionHeader'
 import EditorialCard from '../components/cards/EditorialCard'
 import Modal from '../components/common/Modal'
 import { newsEntries } from '../data/news'
+import { fetchPrakashNews } from '../utils/newsApi'
 
-const categories = ['All', 'India', 'World', 'Technology', 'AI', 'Business', 'Sports']
+const categories = ['All', 'India', 'Technology', 'AI', 'Business', 'Chess']
 
 export default function CurrentAffairs() {
   const [category, setCategory] = useState('All')
   const [selected, setSelected] = useState(null)
-  const stories = useMemo(() => (category === 'All' ? newsEntries : newsEntries.filter((item) => item.category === category)), [category])
+  const [stories, setStories] = useState(newsEntries)
+  const [loading, setLoading] = useState(true)
+  const [sourceLabel, setSourceLabel] = useState('Local editorial fallback')
+
+  useEffect(() => {
+    let active = true
+
+    async function loadNews() {
+      setLoading(true)
+
+      try {
+        const liveStories = await fetchPrakashNews()
+        if (!active) return
+
+        if (liveStories.length > 0) {
+          setStories(liveStories)
+          setSourceLabel('Live NewsAPI feed')
+        } else {
+          setStories(newsEntries)
+          setSourceLabel('Local editorial fallback')
+        }
+      } catch {
+        if (!active) return
+        setStories(newsEntries)
+        setSourceLabel('Local editorial fallback')
+      } finally {
+        if (active) setLoading(false)
+      }
+    }
+
+    loadNews()
+    return () => {
+      active = false
+    }
+  }, [])
+
+  const visibleStories = useMemo(
+    () => (category === 'All' ? stories : stories.filter((item) => item.category === category)),
+    [category, stories],
+  )
 
   return (
     <Page>
       <SectionHeader
         kicker="Current Affairs"
         title="A personalized news desk with concise AI-style summaries."
-        copy="The section favors clarity and context: visual cards, editorial category filters, and expandable summaries for the stories Dad might actually want to discuss."
+        copy="The section favors clarity and context: live stories from NewsAPI when available, filtered to the interests that fit Prakash best."
       />
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3 text-xs font-bold uppercase tracking-[0.2em] text-ink/55">
+        <span>{loading ? 'Refreshing live stories...' : sourceLabel}</span>
+        <span>Showing only Prakash-relevant articles</span>
+      </div>
       <div className="mb-8 flex gap-2 overflow-auto border-y border-ink/20 py-3">
         {categories.map((item) => (
           <button
@@ -31,7 +75,7 @@ export default function CurrentAffairs() {
         ))}
       </div>
       <section className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {stories.map((item, index) => (
+        {visibleStories.map((item, index) => (
           <EditorialCard key={item.id} item={item} large={index === 0 && category === 'All'} onClick={() => setSelected(item)} />
         ))}
       </section>
@@ -42,10 +86,15 @@ export default function CurrentAffairs() {
             <p className="mt-6 text-xs font-bold uppercase tracking-[0.24em] text-burgundy">{selected.category} / {selected.source}</p>
             <h2 className="mt-3 font-display text-5xl font-black leading-none">{selected.headline}</h2>
             <p className="mt-5 text-lg leading-8 text-ink/72">{selected.summary}</p>
+            {selected.publishedAt && (
+              <p className="mt-4 text-xs font-bold uppercase tracking-[0.2em] text-coffee">
+                Published {new Date(selected.publishedAt).toLocaleString()}
+              </p>
+            )}
             <div className="mt-6 border border-ink/15 bg-paper p-5">
-              <p className="text-xs font-bold uppercase tracking-[0.22em] text-coffee">AI Summary Placeholder</p>
+              <p className="text-xs font-bold uppercase tracking-[0.22em] text-coffee">Why it fits</p>
               <p className="mt-3 text-sm leading-6 text-ink/68">
-                Future live integrations can pull verified sources, compare positions, and generate a Dad-friendly brief with context, definitions, and conversation prompts.
+                This story survived the Prakash-interest filter for technology, leadership, business, India, or chess.
               </p>
             </div>
           </article>

@@ -295,16 +295,21 @@ export default function Chess() {
                   return (
                     <div
                       key={`${rankIndex}-${fileIndex}`}
-                      className={`grid aspect-square place-items-center text-xl md:text-2xl ${isLight ? 'bg-newsprint' : 'bg-coffee/70'} ${isFrom ? 'ring-4 ring-burgundy ring-inset' : ''} ${isTo ? 'ring-4 ring-gold ring-inset' : ''}`}
+                      className={`grid aspect-square place-items-center text-xl md:text-2xl ${isLight ? 'bg-[#dcc39a]' : 'bg-[#6b4a2d]'} ${isFrom ? 'ring-4 ring-burgundy ring-inset' : ''} ${isTo ? 'ring-4 ring-gold ring-inset' : ''}`}
                     >
-                      <span className={piece?.color === 'w' ? 'text-ink' : 'text-newsprint'}>{piece ? getPieceSymbol(piece) : ''}</span>
+                      <span
+                        className={piece?.color === 'w' ? 'text-newsprint' : 'text-ink'}
+                        style={piece?.color === 'w' ? { filter: 'drop-shadow(0 1px 1px rgba(17,16,13,0.6))' } : undefined}
+                      >
+                        {piece ? getPieceSymbol(piece) : ''}
+                      </span>
                     </div>
                   )
                 }),
               )
             ) : (
               Array.from({ length: 64 }).map((_, index) => (
-                <div key={index} className={`aspect-square ${Math.floor(index / 8) % 2 === index % 2 ? 'bg-newsprint' : 'bg-coffee/70'}`} />
+                <div key={index} className={`aspect-square ${Math.floor(index / 8) % 2 === index % 2 ? 'bg-[#dcc39a]' : 'bg-[#6b4a2d]'}`} />
               ))
             )}
           </div>
