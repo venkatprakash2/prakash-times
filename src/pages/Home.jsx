@@ -81,55 +81,57 @@ export default function Home() {
 
   return (
     <Page widthClassName="max-w-[1460px]" paddingClassName="px-4 py-4 lg:px-6 lg:py-4">
-      <Masthead edition="Front Page Briefing" />
+      <div className="mx-auto w-full max-w-[1280px]">
+        <Masthead edition="Front Page Briefing" />
 
-      <section className="grid gap-4 lg:grid-cols-[1.45fr_.55fr] 2xl:grid-cols-[1.55fr_.45fr]">
-        <Reveal className="relative min-h-[430px] overflow-hidden border border-ink bg-ink text-newsprint shadow-lift">
-          <img src={featuredMemory.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-68 grayscale-[16%]" />
-          <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/44 to-transparent" />
-          <div className="relative flex min-h-[430px] flex-col justify-between p-4 md:p-6">
-            <div className="mx-auto w-full max-w-3xl text-center">
-              <h2 className="font-display text-3xl font-black leading-none md:text-4xl lg:text-5xl">Headlines</h2>
-            </div>
+        <section className="grid gap-4 lg:grid-cols-[1.45fr_.55fr] 2xl:grid-cols-[1.55fr_.45fr]">
+          <Reveal className="relative min-h-[430px] overflow-hidden border border-ink bg-ink text-newsprint shadow-lift">
+            <img src={featuredMemory.image} alt="" className="absolute inset-0 h-full w-full object-cover opacity-68 grayscale-[16%]" />
+            <div className="absolute inset-0 bg-gradient-to-t from-ink via-ink/44 to-transparent" />
+            <div className="relative flex min-h-[430px] flex-col justify-between p-4 md:p-6">
+              <div className="mx-auto w-full max-w-3xl text-center">
+                <h2 className="font-display text-3xl font-black leading-none md:text-4xl lg:text-5xl">Headlines</h2>
+              </div>
 
-            <div className="mx-auto grid w-full max-w-5xl gap-3 sm:grid-cols-2 xl:max-w-6xl">
-              <HighlightCard
-                to="/memories"
-                label="Memory"
-                title={featuredMemory.title}
-                copy={featuredMemory.story}
-                meta={`${featuredMemory.cluster} / ${featuredMemory.location}`}
-                icon={Newspaper}
-              />
-              <HighlightCard
-                to="/leadership"
-                label="Current role"
-                title={leadershipProfile.headline}
-                copy={currentRole.note}
-                meta={leadershipProfile.location}
-                icon={Crown}
-              />
-              <HighlightCard
-                to="/movies"
-                label="Top movie"
-                title={topMovie?.title ?? 'Movie journal'}
-                copy={topMovie?.review || 'The movie journal keeps the latest favorite at the front.'}
-                image={topMovie?.poster}
-                meta={topMovie ? `${topMovie.status} / ${topMovie.rating}/5` : 'No movie yet'}
-                icon={Clapperboard}
-              />
-              <HighlightCard
-                to="/chess"
-                label="Chess.com"
-                title={chessSummaryText}
-                copy={chessSnapshot?.profile?.title || chessSnapshot?.profile?.location || 'Public profile and recent archive pulled from Chess.com.'}
-                meta={chessSnapshot ? `@${defaultChessUsername} / ${chessSnapshot?.games?.length ?? 0} games scanned` : chessError || `@${defaultChessUsername}`}
-                icon={Trophy}
-              />
+              <div className="mx-auto grid w-full max-w-5xl gap-3 sm:grid-cols-2 xl:max-w-6xl">
+                <HighlightCard
+                  to="/memories"
+                  label="Memory"
+                  title={featuredMemory.title}
+                  copy={featuredMemory.story}
+                  meta={`${featuredMemory.cluster} / ${featuredMemory.location}`}
+                  icon={Newspaper}
+                />
+                <HighlightCard
+                  to="/leadership"
+                  label="Current role"
+                  title={leadershipProfile.headline}
+                  copy={currentRole.note}
+                  meta={leadershipProfile.location}
+                  icon={Crown}
+                />
+                <HighlightCard
+                  to="/movies"
+                  label="Top movie"
+                  title={topMovie?.title ?? 'Movie journal'}
+                  copy={topMovie?.review || 'The movie journal keeps the latest favorite at the front.'}
+                  image={topMovie?.poster}
+                  meta={topMovie ? `${topMovie.status} / ${topMovie.rating}/5` : 'No movie yet'}
+                  icon={Clapperboard}
+                />
+                <HighlightCard
+                  to="/chess"
+                  label="Chess.com"
+                  title={chessSummaryText}
+                  copy={chessSnapshot?.profile?.title || chessSnapshot?.profile?.location || 'Public profile and recent archive pulled from Chess.com.'}
+                  meta={chessSnapshot ? `@${defaultChessUsername} / ${chessSnapshot?.games?.length ?? 0} games scanned` : chessError || `@${defaultChessUsername}`}
+                  icon={Trophy}
+                />
+              </div>
             </div>
-          </div>
-        </Reveal>
-      </section>
+          </Reveal>
+        </section>
+      </div>
     </Page>
   )
 }
