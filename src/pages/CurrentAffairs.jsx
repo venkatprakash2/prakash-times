@@ -13,7 +13,7 @@ export default function CurrentAffairs() {
   const [selected, setSelected] = useState(null)
   const [stories, setStories] = useState(newsEntries)
   const [loading, setLoading] = useState(true)
-  const [sourceLabel, setSourceLabel] = useState('Local editorial fallback')
+  const [sourceLabel, setSourceLabel] = useState('Morning desk')
 
   useEffect(() => {
     let active = true
@@ -30,12 +30,12 @@ export default function CurrentAffairs() {
           setSourceLabel('Live NewsAPI feed')
         } else {
           setStories(newsEntries)
-          setSourceLabel('Local editorial fallback')
+          setSourceLabel('Morning desk')
         }
       } catch {
         if (!active) return
         setStories(newsEntries)
-        setSourceLabel('Local editorial fallback')
+        setSourceLabel('Morning desk')
       } finally {
         if (active) setLoading(false)
       }

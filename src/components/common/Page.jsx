@@ -1,14 +1,19 @@
 import { motion } from 'framer-motion'
 import { pageVariants } from '../../utils/motion'
 
-export default function Page({ children, className = '' }) {
+export default function Page({
+  children,
+  className = '',
+  widthClassName = 'max-w-7xl',
+  paddingClassName = 'px-4 py-8 lg:px-8 lg:py-12',
+}) {
   return (
     <motion.div
       variants={pageVariants}
       initial="initial"
       animate="animate"
       exit="exit"
-      className={`relative mx-auto max-w-7xl px-4 py-8 lg:px-8 lg:py-12 ${className}`}
+      className={`relative mx-auto w-full ${widthClassName} ${paddingClassName} ${className}`}
     >
       <div aria-hidden="true" className="pointer-events-none absolute right-4 top-6 hidden opacity-35 lg:block">
         <div className="relative h-24 w-28">
