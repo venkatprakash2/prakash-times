@@ -6,7 +6,7 @@ import Modal from '../components/common/Modal'
 import { newsEntries } from '../data/news'
 import { fetchPrakashNews } from '../utils/newsApi'
 
-const categories = ['All', 'India', 'Technology', 'AI', 'Business', 'Chess']
+const categories = ['All', 'India', 'Technology', 'AI', 'Business', 'Chess', 'Sports']
 
 export default function CurrentAffairs() {
   const [category, setCategory] = useState('All')

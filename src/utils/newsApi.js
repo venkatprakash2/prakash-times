@@ -23,6 +23,10 @@ const interestTopics = [
     topic: 'Chess',
     terms: ['chess', 'grandmaster', 'rapid', 'blitz', 'Chess.com'],
   },
+  {
+    topic: 'Sports',
+    terms: ['cricket', 'India cricket', 'Indian cricket', 'Olympics', 'Olympic', 'FIFA', 'football', 'soccer'],
+  },
 ]
 
 const relevanceTerms = Array.from(new Set(interestTopics.flatMap((item) => item.terms)))
