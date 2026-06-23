@@ -6,7 +6,7 @@ import Modal from '../components/common/Modal'
 import { newsEntries } from '../data/news'
 import { fetchPrakashNews } from '../utils/newsApi'
 
-const categories = ['All', 'India', 'Technology', 'AI', 'Business', 'Chess', 'Sports']
+const categories = ['All', 'India', 'Technology', 'AI', 'Business', 'Sports']
 
 export default function CurrentAffairs() {
   const [category, setCategory] = useState('All')
@@ -94,7 +94,7 @@ export default function CurrentAffairs() {
             <div className="mt-6 border border-ink/15 bg-paper p-5">
               <p className="text-xs font-bold uppercase tracking-[0.22em] text-coffee">Context</p>
               <p className="mt-3 text-sm leading-6 text-ink/68">
-                This story survived the Prakash-interest filter for technology, leadership, business, India, or chess.
+                This story survived the Prakash-interest filter for technology, leadership, business, India, or sports.
               </p>
             </div>
           </article>
