@@ -8,6 +8,18 @@ import { fetchPrakashNews } from '../utils/newsApi'
 
 const categories = ['All', 'India', 'Technology', 'AI', 'Business', 'Sports']
 
+function getNextRefreshDelayMs() {
+  const now = new Date()
+  const istNowMs = now.getTime() + now.getTimezoneOffset() * 60000 + 5.5 * 60 * 60000
+  const istNow = new Date(istNowMs)
+  const hour = istNow.getUTCHours()
+  const nextHour = hour < 4 ? 4 : hour < 16 ? 16 : 28
+  const nextRefresh = new Date(istNow)
+  nextRefresh.setUTCHours(nextHour, 0, 0, 0)
+
+  return Math.max(1000, nextRefresh.getTime() - istNow.getTime())
+}
+
 export default function CurrentAffairs() {
   const [category, setCategory] = useState('All')
   const [selected, setSelected] = useState(null)
@@ -17,8 +29,9 @@ export default function CurrentAffairs() {
 
   useEffect(() => {
     let active = true
+    let timerId = 0
 
-    async function loadNews() {
+    async function refreshNews() {
       setLoading(true)
 
       try {
@@ -41,9 +54,20 @@ export default function CurrentAffairs() {
       }
     }
 
-    loadNews()
+    function scheduleRefresh() {
+      window.clearTimeout(timerId)
+      timerId = window.setTimeout(async () => {
+        await refreshNews()
+        if (active) scheduleRefresh()
+      }, getNextRefreshDelayMs())
+    }
+
+    refreshNews()
+    scheduleRefresh()
+
     return () => {
       active = false
+      window.clearTimeout(timerId)
     }
   }, [])
 
